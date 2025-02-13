@@ -22,10 +22,10 @@ export default function App() {
       </div>
 
       {/* Renderizar as tasks que estao no state e passar para o component Tasks */}
-
+      
       <button className="flex gap-2 items-center mt-6 hover:text-red-600">
         {IconPlus}
-        <p className="text-md"> Add tasks</p>
+        <p className="text-md">Add tasks</p>
       </button>
     </div>
   );
