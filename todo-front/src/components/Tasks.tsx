@@ -1,3 +1,4 @@
+import Task from "./Task"
 
 interface Task {
     id: number
@@ -11,13 +12,12 @@ interface TasksProps {
     tasks: Task[]
 }
 
-
 export default function Tasks({ tasks }: TasksProps) {
     return (
-        <ul className="flex flex-col">
-            {tasks.map((task) => {
-                return <li key={task.id}>{task.title}</li>
-            })}
+        <ul className="flex flex-col w-full">
+            {tasks.map((task) => (
+                <Task key={task.id} id={task.id} title={task.title} priority={task.priority} />
+            ))}
         </ul>
     )
 }
