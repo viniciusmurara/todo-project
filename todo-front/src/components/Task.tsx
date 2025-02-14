@@ -4,6 +4,7 @@ interface TaskProps {
     id: number
     title: string
     priority: number
+    onDeleteTask: (id: number) => void
 }
 
 export default function Task(props: TaskProps) {
@@ -28,7 +29,7 @@ export default function Task(props: TaskProps) {
                 </div>
                 <div className="flex gap-3 items-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <button>{IconEdit}</button>
-                    <button>{IconTrash}</button>
+                    <button onClick={() => props.onDeleteTask(props.id)}>{IconTrash}</button>
                 </div>
             </div>
             <hr className="bg-gray-100 opacity-25 w-full mt-4" />

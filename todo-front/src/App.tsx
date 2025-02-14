@@ -4,7 +4,8 @@ import Tasks from "./components/Tasks";
 import Modal from "./components/Modal";
 
 export default function App() {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState<any[]>([])
+  const [error, setError] = useState<string>("")
 
   useEffect(() => {
     async function fetchData() {
@@ -14,6 +15,27 @@ export default function App() {
     }
     fetchData()
   }, [])
+
+  function handleAddTask(newTask: any) {
+    setTasks((prev) => [...prev, newTask])
+  }
+
+  async function handleDeleteTask(id: number) {
+    try {
+      const resp = await fetch(`http://localhost:8081/todo/${id}`, {
+        method: 'DELETE'
+      })
+
+      if (!resp.ok) {
+        setError("Failed to delete task.")
+      }
+
+      setTasks((prev) => prev.filter((task) => task.id !== id))
+      setError("")
+    } catch (error) {
+      setError("Failed to delete task.")
+    }
+  }
 
   return (
     <div className={`flex flex-col items-center justify-center px-24
@@ -25,10 +47,11 @@ export default function App() {
         <p className="text-md">{tasks.length} tasks</p>
       </div>
 
-      {/* Renderizar as tasks que estao no state e passar para o component Tasks */}
-      <Tasks tasks={tasks} />
+      {error && <p className="self-center mb-6 text-red-500">{error}</p>}
 
-      <Modal />
+      <Tasks tasks={tasks} onDeleteTask={handleDeleteTask} />
+
+      <Modal title="Add Task" buttonTitle="Add Task" onAddTask={handleAddTask} />
     </div>
   );
 }

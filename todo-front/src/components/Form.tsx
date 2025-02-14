@@ -1,25 +1,127 @@
-import { useState } from "react"
+import { useState } from "react";
 
 interface FormProps {
     isInputFocus: boolean
     setInputFocus: (isInputFocus: boolean) => void
+    handleClose: () => void
+    onAddTask?: (task: any) => void
 }
 
 export default function Form(props: FormProps) {
-    const [title, setTitle] = useState<string>("")
-    
+    const [form, setForm] = useState({
+        title: "",
+        description: "",
+        status: "Pendente",
+        priority: 4,
+    });
+    const [error, setError] = useState("");
+
+    // Função para atualizar um campo específico do formulário
+    const handleInputChange = (field: keyof typeof form) => (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> // Aceita tanto input quanto select
+    ) => {
+        setForm((prevForm) => ({
+            ...prevForm,
+            [field]: e.target.value,
+        }));
+    };
+
+    async function handleAddTask() {
+        if(!form.title || !form.description) {
+            setError("Title and description are required.");
+            return;
+        }
+
+        try {
+            const resp = await fetch("http://localhost:8081/todo", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            })
+
+            if (!resp.ok) {
+                throw new Error("Failed to add task.");
+            }
+
+            const data = await resp.json();
+
+            if (props.onAddTask) {
+                props.onAddTask(data);
+            }
+
+            props.handleClose();
+        } catch {
+            setError("Failed to add task. Please try again.");
+        }
+    }
+
     return (
-        <div className="">
-            <input 
-                type="text" 
-                placeholder="Task name" 
-                onChange={e => setTitle(e.target.value)} 
-                className="bg-neutral-800 opacity-50 focus:opacity-100 p-2 focus:outline-none"
+        <div className="space-y-6">
+            {error && <p className="text-red-500">{error}</p> }
+            <input
+                type="text"
+                placeholder="Task name"
+                value={form.title}
+                onChange={handleInputChange("title")} // Atualiza o campo "title"
+                className="w-full bg-neutral-800 opacity-50 focus:opacity-100 focus:outline-none rounded"
                 onFocus={() => props.setInputFocus(true)}
                 onBlur={() => props.setInputFocus(false)}
-                autoFocus // Foca automaticamente no input quando ele é renderizado
             />
-            <div>{title}</div>
+
+            <input
+                type="text"
+                placeholder="Description"
+                value={form.description}
+                onChange={handleInputChange("description")} // Atualiza o campo "description"
+                className="w-full bg-neutral-800 opacity-50 focus:opacity-100 focus:outline-none rounded"
+                onFocus={() => props.setInputFocus(true)}
+                onBlur={() => props.setInputFocus(false)}
+            />
+
+            <div className="flex gap-4">
+                <select
+                    value={form.status}
+                    onChange={handleInputChange("status")} // Atualiza o campo "status"
+                    className="w-full bg-neutral-800 opacity-50 focus:opacity-100 py-2 border border-white focus:outline-none rounded"
+                    onFocus={() => props.setInputFocus(true)}
+                    onBlur={() => props.setInputFocus(false)}
+                >
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+
+                <select
+                    value={form.priority}
+                    onChange={handleInputChange("priority")} // Atualiza o campo "priority"
+                    className="w-full bg-neutral-800 opacity-50 focus:opacity-100 py-2 border border-white focus:outline-none rounded"
+                    onFocus={() => props.setInputFocus(true)}
+                    onBlur={() => props.setInputFocus(false)}
+                >
+                    <option value={1}>Priority 1</option>
+                    <option value={2}>Priority 2</option>
+                    <option value={3}>Priority 3</option>
+                    <option value={4}>Priority 4</option>
+                </select>
+            </div>
+            <hr className="mt-6 border-opacity-40" />
+            <div className="flex justify-end gap-3 mt-6">
+                <button
+                    onClick={props.handleClose}
+                    className="px-3 py-2 bg-neutral-700 hover:bg-neutral-600 rounded text-sm"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    onClick={handleAddTask}
+                    className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded text-sm"
+                >
+                    Add task
+                </button>
+            </div>
         </div>
-    )
+    );
 }

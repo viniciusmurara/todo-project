@@ -10,13 +10,20 @@ interface Task {
 
 interface TasksProps {
     tasks: Task[]
+    onDeleteTask: (id: number) => void
 }
 
-export default function Tasks({ tasks }: TasksProps) {
+export default function Tasks({ tasks, onDeleteTask }: TasksProps) {
     return (
         <ul className="flex flex-col w-full">
             {tasks.map((task) => (
-                <Task key={task.id} id={task.id} title={task.title} priority={task.priority} />
+                <Task 
+                    key={task.id} 
+                    id={task.id} 
+                    title={task.title} 
+                    priority={task.priority} 
+                    onDeleteTask={onDeleteTask} 
+                />
             ))}
         </ul>
     )
