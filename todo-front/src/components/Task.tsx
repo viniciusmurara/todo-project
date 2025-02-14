@@ -23,8 +23,7 @@ export default function Task(props: TaskProps) {
         <li key={props.id} className="group flex flex-col gap-2 mb-6 w-full cursor-pointer">
             <div className="flex justify-between">
                 <div className="flex items-center gap-3">
-                    <button className={`w-5 h-5 rounded-full border-2 ${handlePriority()}`}>
-                    </button>
+                    <button className={`w-5 h-5 rounded-full border-2 ${handlePriority()}`} />
                     <span>{props.title}</span>
                 </div>
                 <div className="flex gap-3 items-center opacity-0 group-hover:opacity-100 transition-opacity">

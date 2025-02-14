@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { IconPlus, IconCheck } from "./icons";
+import { IconCheck } from "./icons";
 import Tasks from "./components/Tasks";
+import Modal from "./components/Modal";
 
 export default function App() {
   const [tasks, setTasks] = useState([])
@@ -26,11 +27,8 @@ export default function App() {
 
       {/* Renderizar as tasks que estao no state e passar para o component Tasks */}
       <Tasks tasks={tasks} />
-      
-      <button className="flex gap-2 items-center hover:text-red-600">
-        {IconPlus}
-        <p className="text-md">Add tasks</p>
-      </button>
+
+      <Modal />
     </div>
   );
 }
