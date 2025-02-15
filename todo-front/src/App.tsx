@@ -32,7 +32,7 @@ export default function App() {
 
       setTasks((prev) => prev.filter((task) => task.id !== id))
       setError("")
-    } catch (error) {
+    } catch {
       setError("Failed to delete task.")
     }
   }
