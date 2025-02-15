@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 public class ToDoService {
 
-    @Autowired
     private ToDoRepository repository;
+
+    @Autowired
+    public ToDoService(ToDoRepository repository) {
+        this.repository = repository;
+    }
 
     public ToDo create(ToDo todo) {
         if (todo != null) {

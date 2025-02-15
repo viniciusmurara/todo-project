@@ -11,11 +11,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/todo")
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ToDoController {
 
-    @Autowired
     private ToDoService service;
+
+    @Autowired
+    public ToDoController(ToDoService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ToDoResponseDTO create(@RequestBody ToDoRequestDTO todoRequestDTO) {
