@@ -1,19 +1,41 @@
 import { IconEdit, IconTrash } from "../icons"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import TaskModel from "../model/Task"
+import { api } from "../api/api"
 
 interface TaskProps {
     id: number
     title: string
     priority: number
-    onDeleteTask: (id: number) => void
+    onError: (message: string) => void
 }
 
 export default function Task(props: TaskProps) {
+    const queryClient = useQueryClient()
+    
+    const deleteTaskMutation = useMutation({
+        mutationFn: api.deleteTask,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tasks"] })
+            props.onError("")
+        }
+    });
+
+    // Função para adicionar a tarefa
+    const handleDeleteTask = (id: number) => {
+        if (!props.id) {
+            props.onError("Task not found.");
+            return;
+        }
+        deleteTaskMutation.mutate(id);
+    };
+
     function handlePriority(): string {
-        if(props.priority === 1) {
+        if (props.priority === 1) {
             return "bg-[#4B2E2C] border-[#FF7066]"
-        } else if(props.priority === 2) {
+        } else if (props.priority === 2) {
             return "bg-[#4B371B] border-[#FF9A13]"
-        } else if(props.priority === 3){
+        } else if (props.priority === 3) {
             return "bg-[#28364B] border-[#5297FF]"
         } else {
             return "border-white"
@@ -29,7 +51,7 @@ export default function Task(props: TaskProps) {
                 </div>
                 <div className="flex gap-3 items-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <button>{IconEdit}</button>
-                    <button onClick={() => props.onDeleteTask(props.id)}>{IconTrash}</button>
+                    <button onClick={() => handleDeleteTask(props.id)}>{IconTrash}</button>
                 </div>
             </div>
             <hr className="bg-gray-100 opacity-25 w-full mt-4" />

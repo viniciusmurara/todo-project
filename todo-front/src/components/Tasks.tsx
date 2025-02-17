@@ -3,10 +3,10 @@ import TaskModel from "../model/Task"
 
 interface TasksProps {
     tasks: TaskModel[]
-    onDeleteTask: (id: number) => void
+    onError: (message: string) => void
 }
 
-export default function Tasks({ tasks, onDeleteTask }: TasksProps) {
+export default function Tasks({ tasks, onError }: TasksProps) {
     return (
         <ul className="flex flex-col w-full">
             {tasks.map((task) => (
@@ -14,8 +14,8 @@ export default function Tasks({ tasks, onDeleteTask }: TasksProps) {
                     key={task.id}
                     id={task.id ?? 0}
                     title={task.title} 
-                    priority={task.priority} 
-                    onDeleteTask={onDeleteTask} 
+                    priority={task.priority}
+                    onError={onError}
                 />
             ))}
         </ul>
