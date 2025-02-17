@@ -1,6 +1,5 @@
 import { IconEdit, IconTrash } from "../icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import TaskModel from "../model/Task"
 import { api } from "../api/api"
 
 interface TaskProps {
@@ -18,6 +17,8 @@ export default function Task(props: TaskProps) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] })
             props.onError("")
+        }, onError: () => {
+            props.onError("Failed to delete task.")
         }
     });
 

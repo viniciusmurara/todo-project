@@ -11,8 +11,8 @@ interface FormProps {
 }
 
 export default function Form(props: FormProps) {
-    const queryClient = useQueryClient();
-    const { error, handleError: setError } = useError("");
+    const queryClient = useQueryClient()
+    const { error, handleError: setError } = useError("")
 
     const [form, setForm] = useState({
         title: "",
@@ -21,29 +21,28 @@ export default function Form(props: FormProps) {
         priority: 4,
     });
 
-    // Mutation para adicionar uma nova tarefa
     const addTaskMutation = useMutation({
         mutationFn: (newTask: Task) => api.addTask(newTask),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["tasks"] });
-            setError("");
-            props.handleClose();
+            queryClient.invalidateQueries({ queryKey: ["tasks"] })
+            setError("")
+            props.handleClose()
         }
     });
 
-    // Função para adicionar a tarefa
     const handleAddTask = () => {
         if (!form.title || !form.description) {
-            setError("Title and description are required.");
-            return;
+            setError("Title and description are required.")
+            return
         }
-        addTaskMutation.mutate(form);
+        addTaskMutation.mutate(form)
     };
 
     // REVER ESTA FUNÇÃO, ESTA SENDO CHAMADA A CADA LETRA DIGITADA
     const handleInputChange = (field: keyof typeof form) => (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> // Aceita tanto input quanto select
     ) => {
+        console.log("Atualizado...")
         setForm((prevForm) => ({
             ...prevForm,
             [field]: e.target.value,

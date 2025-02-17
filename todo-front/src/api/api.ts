@@ -2,13 +2,15 @@ import Task from "../model/Task";
 
 export const api = {
     getTasks: async (): Promise<Task[]> => {
+      // simulando delay
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const resp = await fetch("http://localhost:8081/todo");
       return resp.json();
     },
 
-    deleteTask: async (id: number): Promise<Response> => {
-        const resp = await fetch(`http://localhost:8081/todo/${id}`, { method: "DELETE" });
-        return resp.json()
+    deleteTask: async (id: number): Promise<void> => {
+        await fetch(`http://localhost:8081/todo/${id}`, { method: "DELETE" });
     },
     
     addTask: async (task: Task): Promise<Task> => {
