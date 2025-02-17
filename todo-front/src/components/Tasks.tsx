@@ -1,15 +1,8 @@
 import Task from "./Task"
-
-interface Task {
-    id: number
-    title: string
-    description: string
-    status: string
-    priority: number
-}
+import TaskModel from "../model/Task"
 
 interface TasksProps {
-    tasks: Task[]
+    tasks: TaskModel[]
     onDeleteTask: (id: number) => void
 }
 
@@ -18,8 +11,8 @@ export default function Tasks({ tasks, onDeleteTask }: TasksProps) {
         <ul className="flex flex-col w-full">
             {tasks.map((task) => (
                 <Task 
-                    key={task.id} 
-                    id={task.id} 
+                    key={task.id}
+                    id={task.id ?? 0}
                     title={task.title} 
                     priority={task.priority} 
                     onDeleteTask={onDeleteTask} 

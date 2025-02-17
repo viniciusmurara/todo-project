@@ -1,40 +1,37 @@
-import { useEffect, useState } from "react";
 import { IconCheck } from "./icons";
 import Tasks from "./components/Tasks";
 import Modal from "./components/Modal";
+import Task from "./model/Task";
+import useError from "./hooks/useError";
+import { api } from "./api/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function App() {
-  const [tasks, setTasks] = useState<any[]>([])
-  const [error, setError] = useState<string>("")
+  const { error, handleError: setError } = useError("")
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    async function fetchData() {
-      const resp = await fetch("http://localhost:8081/todo")
-      const data = await resp.json()
-      setTasks(data)
-    }
-    fetchData()
-  }, [])
+  // GET COM REACT QUERY
+  const { data, isLoading, isError } = useQuery<Task[]>({
+    queryKey: ["tasks"],
+    queryFn: api.getTasks
+  })
 
-  function handleAddTask(newTask: any) {
-    setTasks((prev) => [...prev, newTask])
-  }
+  // DELETE COM REACT QUERY
+  const deleteTaskMutation = useMutation({
+    mutationFn: api.deleteTask,
+    onSuccess: (_, id) => {
+      queryClient.setQueryData<Task[]>(["tasks"], (oldTasks) =>
+        oldTasks?.filter((task) => task.id !== id)
+      );
+      setError("");
+    },
+    onError: () => {
+      setError("Failed to delete task.");
+    },
+  });
 
-  async function handleDeleteTask(id: number) {
-    try {
-      const resp = await fetch(`http://localhost:8081/todo/${id}`, {
-        method: 'DELETE'
-      })
-
-      if (!resp.ok) {
-        setError("Failed to delete task.")
-      }
-
-      setTasks((prev) => prev.filter((task) => task.id !== id))
-      setError("")
-    } catch {
-      setError("Failed to delete task.")
-    }
+  function handleDeleteTask(id: number) {
+    deleteTaskMutation.mutate(id);
   }
 
   return (
@@ -44,14 +41,13 @@ export default function App() {
       <h1 className="text-3xl font-bold mt-12">Today's Tasks</h1>
       <div className="flex gap-2 items-center mt-3 mb-10">
         {IconCheck}
-        <p className="text-md">{tasks.length} tasks</p>
+        <p className="text-md">{data?.length} tasks</p>
       </div>
 
       {error && <p className="self-center mb-6 text-red-500">{error}</p>}
 
-      <Tasks tasks={tasks} onDeleteTask={handleDeleteTask} />
-
-      <Modal title="Add Task" buttonTitle="Add Task" onAddTask={handleAddTask} />
+      <Tasks tasks={data ?? []} onDeleteTask={handleDeleteTask} />
+      <Modal title="Add Task" buttonTitle="Add Task" />
     </div>
   );
 }

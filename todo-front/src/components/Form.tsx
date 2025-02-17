@@ -1,20 +1,44 @@
 import { useState } from "react";
+import Task, { TaskStatus } from "../model/Task";
+import useError from "../hooks/useError";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../api/api";
 
 interface FormProps {
     isInputFocus: boolean
     setInputFocus: (isInputFocus: boolean) => void
     handleClose: () => void
-    onAddTask?: (task: any) => void
 }
 
 export default function Form(props: FormProps) {
+    const queryClient = useQueryClient();
+    const { error, handleError: setError } = useError("");
+
     const [form, setForm] = useState({
         title: "",
         description: "",
-        status: "Pendente",
+        status: TaskStatus.Pending,
         priority: 4,
     });
-    const [error, setError] = useState("");
+
+    // Mutation para adicionar uma nova tarefa
+    const addTaskMutation = useMutation({
+        mutationFn: (newTask: Task) => api.addTask(newTask),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tasks"] });
+            setError("");
+            props.handleClose();
+        }
+    });
+
+    // Função para adicionar a tarefa
+    const handleAddTask = () => {
+        if (!form.title || !form.description) {
+            setError("Title and description are required.");
+            return;
+        }
+        addTaskMutation.mutate(form);
+    };
 
     // Função para atualizar um campo específico do formulário
     const handleInputChange = (field: keyof typeof form) => (
@@ -26,40 +50,9 @@ export default function Form(props: FormProps) {
         }));
     };
 
-    async function handleAddTask() {
-        if(!form.title || !form.description) {
-            setError("Title and description are required.");
-            return;
-        }
-
-        try {
-            const resp = await fetch("http://localhost:8081/todo", {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(form),
-            })
-
-            if (!resp.ok) {
-                throw new Error("Failed to add task.");
-            }
-
-            const data = await resp.json();
-
-            if (props.onAddTask) {
-                props.onAddTask(data);
-            }
-
-            props.handleClose();
-        } catch {
-            setError("Failed to add task. Please try again.");
-        }
-    }
-
     return (
         <div className="space-y-6">
-            {error && <p className="text-red-500">{error}</p> }
+            {error && <p className="text-red-500">{error}</p>}
             <input
                 type="text"
                 placeholder="Task name"
@@ -88,9 +81,11 @@ export default function Form(props: FormProps) {
                     onFocus={() => props.setInputFocus(true)}
                     onBlur={() => props.setInputFocus(false)}
                 >
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
+                    {Object.values(TaskStatus).map((status) => (
+                        <option key={status} value={status}>
+                            {status}
+                        </option>
+                    ))}
                 </select>
 
                 <select
@@ -100,10 +95,11 @@ export default function Form(props: FormProps) {
                     onFocus={() => props.setInputFocus(true)}
                     onBlur={() => props.setInputFocus(false)}
                 >
-                    <option value={1}>Priority 1</option>
-                    <option value={2}>Priority 2</option>
-                    <option value={3}>Priority 3</option>
-                    <option value={4}>Priority 4</option>
+                    
+                    <option key={1} value={1}>Urgent</option>
+                    <option key={2} value={2}>High</option>
+                    <option key={3} value={3}>Medium</option>
+                    <option key={4} value={4}>Low</option>
                 </select>
             </div>
             <hr className="mt-6 border-opacity-40" />

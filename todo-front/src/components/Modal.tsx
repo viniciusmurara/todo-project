@@ -6,10 +6,9 @@ interface ModalProps {
     onClose?: () => void
     title: string
     buttonTitle: string
-    onAddTask: (task: any) => void
 }
 
-export default function Modal({ onClose, title, buttonTitle, onAddTask }: ModalProps) {
+export default function Modal({ onClose, title, buttonTitle }: ModalProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isInputFocus, setIsInputFocus] = useState(false);
 
@@ -58,7 +57,6 @@ export default function Modal({ onClose, title, buttonTitle, onAddTask }: ModalP
                             isInputFocus={isInputFocus} 
                             setInputFocus={setIsInputFocus} 
                             handleClose={handleClose}
-                            onAddTask={onAddTask}
                         />
                     </div>
                 </div>
