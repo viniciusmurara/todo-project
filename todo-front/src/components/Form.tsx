@@ -8,37 +8,61 @@ interface FormProps {
     isInputFocus: boolean
     setInputFocus: (isInputFocus: boolean) => void
     handleClose: () => void
+    task?: Task | null
 }
 
 export default function Form(props: FormProps) {
     const queryClient = useQueryClient()
     const { error, handleError: setError } = useError("")
 
-    const [form, setForm] = useState({
-        title: "",
-        description: "",
-        status: TaskStatus.Pending,
-        priority: 4,
+    const [form, setForm] = useState(() => {
+        return props.task || {
+            title: "",
+            description: "",
+            status: TaskStatus.Pending,
+            priority: 4,
+        };
     });
 
     const addTaskMutation = useMutation({
         mutationFn: (newTask: Task) => api.addTask(newTask),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] })
+            queryClient.invalidateQueries({ queryKey: ["taskCount"] });
             setError("")
             props.handleClose()
         }
     });
 
-    const handleAddTask = () => {
-        if (!form.title || !form.description) {
-            setError("Title and description are required.")
-            return
+    const updateTaskMutation = useMutation({
+        mutationFn: (updatedTask: Task) => {
+          if (!updatedTask.id) {
+            setError("Task ID is required for update.");
+          }
+          return api.updateTask(updatedTask);
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["tasks"] });
+          setError("");
+          props.handleClose();
+        },
+        onError: () => {
+          setError("Failed to update task.");
         }
-        addTaskMutation.mutate(form)
+      });
+
+    const handleSubmit = () => {
+        if (!form.title || !form.description) {
+            setError("Title and description are required.");
+            return;
+        }
+        if (props.task?.id) {
+            updateTaskMutation.mutate(form);
+        } else {
+            addTaskMutation.mutate(form);
+        }
     };
 
-    // REVER ESTA FUNÇÃO, ESTA SENDO CHAMADA A CADA LETRA DIGITADA
     const handleInputChange = (field: keyof typeof form) => (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> // Aceita tanto input quanto select
     ) => {
@@ -56,7 +80,7 @@ export default function Form(props: FormProps) {
                 type="text"
                 placeholder="Task name"
                 value={form.title}
-                onChange={handleInputChange("title")} // Atualiza o campo "title"
+                onChange={handleInputChange("title")}
                 className="w-full bg-neutral-800 opacity-50 focus:opacity-100 focus:outline-none rounded"
                 onFocus={() => props.setInputFocus(true)}
                 onBlur={() => props.setInputFocus(false)}
@@ -66,7 +90,7 @@ export default function Form(props: FormProps) {
                 type="text"
                 placeholder="Description"
                 value={form.description}
-                onChange={handleInputChange("description")} // Atualiza o campo "description"
+                onChange={handleInputChange("description")}
                 className="w-full bg-neutral-800 opacity-50 focus:opacity-100 focus:outline-none rounded"
                 onFocus={() => props.setInputFocus(true)}
                 onBlur={() => props.setInputFocus(false)}
@@ -75,7 +99,7 @@ export default function Form(props: FormProps) {
             <div className="flex gap-4">
                 <select
                     value={form.status}
-                    onChange={handleInputChange("status")} // Atualiza o campo "status"
+                    onChange={handleInputChange("status")}
                     className="w-full bg-neutral-800 opacity-50 focus:opacity-100 py-2 border border-white focus:outline-none rounded"
                     onFocus={() => props.setInputFocus(true)}
                     onBlur={() => props.setInputFocus(false)}
@@ -89,12 +113,12 @@ export default function Form(props: FormProps) {
 
                 <select
                     value={form.priority}
-                    onChange={handleInputChange("priority")} // Atualiza o campo "priority"
+                    onChange={handleInputChange("priority")}
                     className="w-full bg-neutral-800 opacity-50 focus:opacity-100 py-2 border border-white focus:outline-none rounded"
                     onFocus={() => props.setInputFocus(true)}
                     onBlur={() => props.setInputFocus(false)}
                 >
-                    
+
                     <option key={1} value={1}>Urgent</option>
                     <option key={2} value={2}>High</option>
                     <option key={3} value={3}>Medium</option>
@@ -111,10 +135,10 @@ export default function Form(props: FormProps) {
                 </button>
 
                 <button
-                    onClick={handleAddTask}
+                    onClick={handleSubmit}
                     className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded text-sm"
                 >
-                    Add task
+                    {props.task?.id ? "Save Changes" : "Add Task"}
                 </button>
             </div>
         </div>

@@ -4,18 +4,18 @@ import TaskModel from "../model/Task"
 interface TasksProps {
     tasks: TaskModel[]
     onError: (message: string) => void
+    onEditTask: (task: TaskModel) => void
 }
 
-export default function Tasks({ tasks, onError }: TasksProps) {
+export default function Tasks({ tasks, onError, onEditTask }: TasksProps) {
     return (
         <ul className="flex flex-col w-full">
             {tasks.map((task) => (
                 <Task 
                     key={task.id}
-                    id={task.id ?? 0}
-                    title={task.title} 
-                    priority={task.priority}
+                    task={task}
                     onError={onError}
+                    onEditTask={() => onEditTask(task)}
                 />
             ))}
         </ul>

@@ -1,8 +1,16 @@
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../api/api";
+
 interface SkeletonLoadingProps {
     className?: string
 }
 
 export default function SkeletonLoading({ className } : SkeletonLoadingProps) {
+    const { data: taskCount } = useQuery<number>({
+        queryKey: ["taskCount"],
+        queryFn: api.getTaskLength
+    })
+
     return (
         <div className={`flex flex-col w-full animate-pulse ${className}`}>
             {/* Título */}
@@ -16,8 +24,8 @@ export default function SkeletonLoading({ className } : SkeletonLoadingProps) {
 
             {/* Lista de tarefas */}
             <div className="flex flex-col w-full gap-6">
-                {[...Array(2)].map((_, index) => (
-                    <div key={index} className="flex flex-col gap-2">
+                {[...Array(taskCount)].map((_, index) => (
+                    <div key={index} className="flex flex-col gap-3">
                         {/* Tarefa */}
                         <div className="flex justify-between">
                             <div className="flex items-center gap-3">

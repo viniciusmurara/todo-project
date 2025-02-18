@@ -1,58 +1,58 @@
 import { IconEdit, IconTrash } from "../icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { api } from "../api/api"
+import { handlePriority } from "../functions/priority"
+import TaskModel from "../model/Task"
 
 interface TaskProps {
-    id: number
-    title: string
-    priority: number
+    task: TaskModel
     onError: (message: string) => void
+    onEditTask: (task: TaskModel) => void
 }
 
-export default function Task(props: TaskProps) {
+export default function Task({task, onError, onEditTask}: TaskProps) {
     const queryClient = useQueryClient()
     
     const deleteTaskMutation = useMutation({
         mutationFn: api.deleteTask,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] })
-            props.onError("")
+            queryClient.invalidateQueries({ queryKey: ["taskCount"] });
+            onError("")
         }, onError: () => {
-            props.onError("Failed to delete task.")
+            onError("Failed to delete task.")
         }
     });
 
-    // Função para adicionar a tarefa
-    const handleDeleteTask = (id: number) => {
-        if (!props.id) {
-            props.onError("Task not found.");
+    function handleDeleteTask(id: number) {
+        if (!task.id) {
+            onError("Task not found.");
             return;
         }
         deleteTaskMutation.mutate(id);
     };
 
-    function handlePriority(): string {
-        if (props.priority === 1) {
-            return "bg-[#4B2E2C] border-[#FF7066]"
-        } else if (props.priority === 2) {
-            return "bg-[#4B371B] border-[#FF9A13]"
-        } else if (props.priority === 3) {
-            return "bg-[#28364B] border-[#5297FF]"
-        } else {
-            return "border-white"
+    function handleEditTask() {
+        const currentTask = {
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            status: task.status,
+            priority: task.priority
         }
+        onEditTask(currentTask)
     }
 
     return (
-        <li key={props.id} className="group flex flex-col gap-2 mb-6 w-full cursor-pointer">
+        <li key={task.id} className="group flex flex-col gap-2 mb-6 w-full cursor-pointer">
             <div className="flex justify-between">
                 <div className="flex items-center gap-3">
-                    <button className={`w-5 h-5 rounded-full border-2 ${handlePriority()}`} />
-                    <span>{props.title}</span>
+                    <button className={`w-5 h-5 rounded-full border-2 ${handlePriority(task.priority)}`} />
+                    <span>{task.title}</span>
                 </div>
                 <div className="flex gap-3 items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button>{IconEdit}</button>
-                    <button onClick={() => handleDeleteTask(props.id)}>{IconTrash}</button>
+                    <button onClick={() => handleEditTask()}>{IconEdit}</button>
+                    <button onClick={() => task.id !== undefined && handleDeleteTask(task.id)}>{IconTrash}</button>
                 </div>
             </div>
             <hr className="bg-gray-100 opacity-25 w-full mt-4" />
