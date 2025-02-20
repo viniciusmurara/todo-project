@@ -1,5 +1,3 @@
-
-
 export function handlePriority(priority: number): string {
     if (priority === 1) {
         return "bg-[#4B2E2C] border-[#FF7066]"
