@@ -1,35 +1,22 @@
 import { IconEdit, IconTrash } from "../icons"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { api } from "../api/api"
 import { handlePriority } from "../functions/priority"
 import TaskModel from "../model/Task"
 
 interface TaskProps {
     task: TaskModel
     onError: (message: string) => void
-    onEditTask: (task: TaskModel) => void
+    onEdit: (task: TaskModel) => void
+    onDelete: (task: TaskModel) => void
 }
 
-export default function Task({task, onError, onEditTask}: TaskProps) {
-    const queryClient = useQueryClient()
-    
-    const deleteTaskMutation = useMutation({
-        mutationFn: api.deleteTask,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["tasks"] })
-            queryClient.invalidateQueries({ queryKey: ["taskCount"] });
-            onError("")
-        }, onError: () => {
-            onError("Failed to delete task.")
-        }
-    });
+export default function Task({task, onError, onEdit, onDelete}: TaskProps) {
 
-    function handleDeleteTask(id: number) {
+    function handleDeleteTask() {
         if (!task.id) {
             onError("Task not found.");
             return;
         }
-        deleteTaskMutation.mutate(id);
+        onDelete(task)
     };
 
     function handleEditTask() {
@@ -40,7 +27,7 @@ export default function Task({task, onError, onEditTask}: TaskProps) {
             status: task.status,
             priority: task.priority
         }
-        onEditTask(currentTask)
+        onEdit(currentTask)
     }
 
     return (
@@ -52,7 +39,7 @@ export default function Task({task, onError, onEditTask}: TaskProps) {
                 </div>
                 <div className="flex gap-3 items-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => handleEditTask()}>{IconEdit}</button>
-                    <button onClick={() => task.id !== undefined && handleDeleteTask(task.id)}>{IconTrash}</button>
+                    <button onClick={() => task.id !== undefined && handleDeleteTask()}>{IconTrash}</button>
                 </div>
             </div>
             <hr className="bg-gray-100 opacity-25 w-full mt-4" />
