@@ -54,9 +54,8 @@ export default function App() {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center px-24 pb-12
-      md:items-start md:justify-start md:px-32 min-h-screen
-      lg:px-60 2xl:px-96`}
+      className={`flex flex-col items-center px-24 pb-12 min-h-screen
+      md:items-start md:px-32 lg:px-60 2xl:px-96`}
     >
       {isLoading ? (
         <SkeletonLoading className="mt-12" />

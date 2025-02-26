@@ -32,5 +32,14 @@ export const api = {
         body: JSON.stringify(task)
       });
       return resp.json();
+    },
+
+    updateTaskStatus: async (task: Task): Promise<Task> => {
+      const resp = await fetch(`http://localhost:8082/todo/${task.id}`, {
+        method: 'PATCH',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: task.status })
+      });
+      return resp.json();
     }
   };
