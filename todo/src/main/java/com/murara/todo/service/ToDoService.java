@@ -31,7 +31,7 @@ public class ToDoService {
     }
 
     public List<ToDo> getAll() {
-        return this.repository.findAll();
+        return this.repository.findAllByOrderByPriorityAsc();
     }
 
     public ToDo getById(int id) {

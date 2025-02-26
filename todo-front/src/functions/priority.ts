@@ -8,7 +8,7 @@ export function getPriorityClasses(priority: number): PriorityClasses {
         case 1:
             return {
                 container: "bg-[#4B2E2C] border-[#FF7066]",
-                icon: "text-[#FF7066]" // Mudamos para text-color
+                icon: "text-[#FF7066]"
             };
         case 2:
             return {

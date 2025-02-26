@@ -12,7 +12,7 @@ import lombok.*;
 public class ToDo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -20,5 +20,5 @@ public class ToDo {
     @Column(nullable = false)
     private String status;
     @Column(nullable = false)
-    private int priority;
+    private Integer priority;
 }
