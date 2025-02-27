@@ -41,5 +41,10 @@ export const api = {
         body: JSON.stringify({ status: task.status })
       });
       return resp.json();
+    },
+
+    getTaskById: async (id: number): Promise<Task> => {
+      const resp = await fetch(`http://localhost:8082/${id}`);
+      return resp.json();
     }
   };

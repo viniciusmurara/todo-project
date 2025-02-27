@@ -14,6 +14,6 @@ public class ToDoRequestDTO {
     private int priority;
 
     public ToDo mapToEntity() {
-        return new ToDo(0, this.title, this.description, this.status, this.priority);
+        return new ToDo(null, this.title, this.description, this.status, this.priority);
     }
 }

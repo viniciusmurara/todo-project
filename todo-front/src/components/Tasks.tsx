@@ -6,9 +6,10 @@ interface TasksProps {
     onError: (message: string) => void
     onEdit: (task: TaskModel) => void
     onDelete: (task: TaskModel) => void
+    onInfo: (task: TaskModel) => void
 }
 
-export default function Tasks({ tasks, onError, onEdit, onDelete }: TasksProps) {
+export default function Tasks({ tasks, onError, onEdit, onDelete, onInfo }: TasksProps) {
     return (
         <ul className="flex flex-col w-full">
             {tasks.map((task) => (
@@ -18,6 +19,7 @@ export default function Tasks({ tasks, onError, onEdit, onDelete }: TasksProps) 
                     onError={onError}
                     onEdit={() => onEdit(task)}
                     onDelete={onDelete}
+                    onInfo={onInfo}
                 />
             ))}
         </ul>

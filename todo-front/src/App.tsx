@@ -12,7 +12,7 @@ export default function App() {
   const { error, handleError: setError } = useError("")
   const [showModal, setShowModal] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [modalType, setModalType] = useState<"add" | "edit" | "delete">("add");
+  const [modalType, setModalType] = useState<"add" | "edit" | "delete" | "info">("add");
 
   const queryClient = useQueryClient()
 
@@ -52,6 +52,12 @@ export default function App() {
     setShowModal(true);
   }
 
+  function handleOpenInfoModal(task: Task) {
+    setModalType("info");
+    setSelectedTask(task);
+    setShowModal(true);
+  }
+
   return (
     <div
       className={`flex flex-col items-center px-24 pb-12 min-h-screen
@@ -61,7 +67,7 @@ export default function App() {
         <SkeletonLoading className="mt-12" />
       ) : (
         <>
-          <h1 className="text-3xl font-bold mt-12">Today's Tasks</h1>
+          <h1 className="text-3xl font-bold mt-12">ToDo List</h1>
           <div className="flex gap-2 items-center mt-3 mb-10">
             {IconList}
             <p className="text-md">{data ? data.length : 0} tasks</p>
@@ -74,6 +80,7 @@ export default function App() {
             onError={setError}
             onEdit={handleOpenEditModal}
             onDelete={handleOpenDeleteModal}
+            onInfo={handleOpenInfoModal}
           />
 
           <button className="flex gap-2 items-center hover:text-red-500" onClick={handleOpenAddModal}>

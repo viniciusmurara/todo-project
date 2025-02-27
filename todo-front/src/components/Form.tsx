@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import Task, { TaskStatus } from "../model/Task";
 import useError from "../hooks/useError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,12 +9,13 @@ interface FormProps {
     setInputFocus: (isInputFocus: boolean) => void
     onClose: () => void
     task?: Task | null
+    type: string
 }
 
-export default function Form({ setInputFocus, onClose, task }: FormProps) {
+export default function Form({ setInputFocus, onClose, task, type }: FormProps) {
     const queryClient = useQueryClient()
     const { error, handleError: setError } = useError("")
-    
+
     const { register, handleSubmit } = useForm<Task>({
         defaultValues: task || {
             title: "",
@@ -63,10 +65,24 @@ export default function Form({ setInputFocus, onClose, task }: FormProps) {
 
     const inputProps = (name: keyof Task) => ({
         ...register(name),
-        className: "w-full bg-neutral-800 opacity-50 focus:opacity-100 focus:outline-none rounded",
+        className: `w-full bg-neutral-800 focus:outline-none rounded
+        ${type === "info" ? "opacity-100" : "opacity-50 focus:opacity-100"}`,
         onFocus: () => setInputFocus(true),
         onBlur: () => setInputFocus(false)
     });
+
+    const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+
+    const adjustHeight = (textarea: HTMLTextAreaElement) => {
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    };
+
+    useEffect(() => {
+        if (descriptionRef.current) {
+            adjustHeight(descriptionRef.current);
+        }
+    }, [task]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -75,59 +91,88 @@ export default function Form({ setInputFocus, onClose, task }: FormProps) {
             )}
 
             <div>
+                <h2 className="mb-2 text-sm opacity-50">Name:</h2>
                 <input
                     {...inputProps("title")}
                     placeholder="Task name"
+                    disabled={type === "info"}
                 />
             </div>
 
             <div>
-                <input
-                    {...inputProps("description")}
+                <h2 className="mb-2 text-sm opacity-50">Description:</h2>
+                <textarea
+                    {...register("description")}
+                    ref={(e) => {
+                        const refHook = register("description").ref;
+                        refHook(e);
+                        descriptionRef.current = e;
+                    }}
+                    onInput={(e) => adjustHeight(e.currentTarget)}
                     placeholder="Description"
+                    disabled={type === "info"}
+                    className={`w-full bg-neutral-800 focus:outline-none rounded resize-none
+                        ${type === "info" ? "opacity-100" : "opacity-50 focus:opacity-100"}`}
+                    rows={1}
+                    onFocus={() => setInputFocus(true)}
+                    onBlur={() => setInputFocus(false)}
                 />
             </div>
 
-            <div className="flex gap-4">
-                <select
-                    {...register("status")}
-                    className="w-full bg-neutral-800 opacity-50 focus:opacity-100 py-2 border border-white focus:outline-none rounded"
-                >
-                    {Object.values(TaskStatus).map((status) => (
-                        <option key={status} value={status}>
-                            {status}
-                        </option>
-                    ))}
-                </select>
+            <div className={`flex gap-4 ${type === "info" && "pb-1"}`}>
+                <div className="w-full">
+                    <h2 className="mb-2 text-sm opacity-50">Status:</h2>
+                    <select
+                        {...register("status")}
+                        className={`w-full bg-neutral-800 py-2 border border-white focus:outline-none rounded
+                            ${type === "info" ? "opacity-100 appearance-none pl-2" : "opacity-50 focus:opacity-100"}`}
+                        disabled={type === "info"}
+                    >
+                        {Object.values(TaskStatus).map((status) => (
+                            <option key={status} value={status}>
+                                {status}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
-                <select
-                    {...register("priority", { valueAsNumber: true })}
-                    className="w-full bg-neutral-800 opacity-50 focus:opacity-100 py-2 border border-white focus:outline-none rounded"
-                >
-                    {[["Urgent", 1], ["High", 2], ["Medium", 3], ["Low", 4]].map(([label, value]) => (
-                        <option key={value} value={value}>{label}</option>
-                    ))}
-                </select>
+                <div className="w-full">
+                    <h2 className="mb-2 text-sm opacity-50">Priority:</h2>
+                    <select
+                        {...register("priority", { valueAsNumber: true })}
+                        className={`w-full bg-neutral-800 py-2 border border-white focus:outline-none rounded
+                            ${type === "info" ? "opacity-100 appearance-none pl-2" : "opacity-50 focus:opacity-100"}`}
+                        disabled={type === "info"}
+                    >
+                        {[["Urgent", 1], ["High", 2], ["Medium", 3], ["Low", 4]].map(([label, value]) => (
+                            <option key={value} value={value}>{label}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
-            <hr className="mt-6 border-opacity-40" />
-            
-            <div className="flex justify-end gap-3 mt-6">
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-3 py-2 bg-neutral-700 hover:bg-neutral-600 rounded text-sm"
-                >
-                    Cancel
-                </button>
+            {type !== "info" && (
+                <>
+                    <hr className="mt-6 border-opacity-40" />
 
-                <button
-                    type="submit"
-                    className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded text-sm"
-                >
-                    {task?.id ? "Save Changes" : "Add Task"}
-                </button>
-            </div>
+                    <div className="flex justify-end gap-3 mt-6">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-3 py-2 bg-neutral-700 hover:bg-neutral-600 rounded text-sm"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded text-sm"
+                        >
+                            {task?.id ? "Save Changes" : "Add Task"}
+                        </button>
+                    </div>
+                </>
+            )}
         </form>
     );
 }

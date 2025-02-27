@@ -4,7 +4,7 @@ import Form from './Form';
 import Task from '../model/Task';
 
 interface ModalProps {
-    type: "add" | "edit" | "delete"
+    type: "add" | "edit" | "delete" | "info"
     onClose: () => void
     task?: Task | null
     onDelete: (id: number) => void
@@ -30,12 +30,13 @@ export default function Modal({ type, onClose, task, onDelete }: ModalProps) {
             className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center"
             onClick={handleOverlayClick}>
             <div className={`flex flex-col bg-neutral-800 p-5 rounded-lg w-2/3 sm:w-1/2 xl:w-1/3 shadow-lg
-                        ${isInputFocus ? "border border-white border-opacity-40" : ""}`}>
+                        ${isInputFocus || type === "info" ? "border border-white border-opacity-40" : ""}`}>
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-2xl font-semibold">
                         {type === "add" && "Add Task"}
                         {type === "edit" && "Edit Task"}
                         {type === "delete" && "Delete Task"}
+                        {type === "info" && "Task Info"}
                     </h1>
                     <button onClick={onClose}>{IconClose}</button>
                 </div>
@@ -68,7 +69,8 @@ export default function Modal({ type, onClose, task, onDelete }: ModalProps) {
                     <Form
                         setInputFocus={setIsInputFocus}
                         onClose={onClose}
-                        task={type === "edit" ? task : undefined}
+                        task={type === "edit" || type === "info" ? task : undefined}
+                        type={type}
                     />
                 )}
             </div>
