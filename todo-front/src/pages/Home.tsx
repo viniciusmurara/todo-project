@@ -1,14 +1,14 @@
-import Tasks from "./components/Tasks";
-import Task from "./model/Task";
-import useError from "./hooks/useError";
-import { api } from "./api/api";
+import Tasks from "../components/Tasks";
+import Task from "../model/Task";
+import useError from "../hooks/useError";
+import { api } from "../api/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import SkeletonLoading from "./components/SkeletonLoading";
-import { IconPlus, IconList } from "./icons";
+import SkeletonLoading from "../components/SkeletonLoading";
+import { IconPlus, IconList } from "../icons";
 import { useState } from "react";
-import Modal from "./components/Modal";
+import Modal from "../components/Modal";
 
-export default function App() {
+export default function Home() {
   const { error, handleError: setError } = useError("")
   const [showModal, setShowModal] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
