@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import Task, { TaskStatus } from "../model/Task";
 import useError from "../hooks/useError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../api/api";
+import { todo } from "../api/todo";
 
 interface FormProps {
     setInputFocus: (isInputFocus: boolean) => void
@@ -26,7 +26,7 @@ export default function Form({ setInputFocus, onClose, task, type }: FormProps) 
     });
 
     const addTaskMutation = useMutation({
-        mutationFn: (newTask: Task) => api.addTask(newTask),
+        mutationFn: (newTask: Task) => todo.addTask(newTask),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] })
             queryClient.invalidateQueries({ queryKey: ["taskCount"] });
@@ -38,7 +38,7 @@ export default function Form({ setInputFocus, onClose, task, type }: FormProps) 
     const updateTaskMutation = useMutation({
         mutationFn: (updatedTask: Task) => {
             if (!updatedTask.id) throw new Error("Task ID is required");
-            return api.updateTask(updatedTask);
+            return todo.updateTask(updatedTask);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] });

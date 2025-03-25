@@ -1,4 +1,4 @@
-package com.murara.todo.model;
+package com.murara.todo.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

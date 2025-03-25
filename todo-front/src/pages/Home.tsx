@@ -1,7 +1,7 @@
 import Tasks from "../components/Tasks";
 import Task from "../model/Task";
 import useError from "../hooks/useError";
-import { api } from "../api/api";
+import { todo } from "../api/todo";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import SkeletonLoading from "../components/SkeletonLoading";
 import { IconPlus, IconList } from "../icons";
@@ -18,11 +18,11 @@ export default function Home() {
 
   const { data, isLoading } = useQuery<Task[]>({
     queryKey: ["tasks"],
-    queryFn: api.getTasks,
+    queryFn: todo.getTasks,
   });
 
   const deleteMutation = useMutation({
-    mutationFn: api.deleteTask,
+    mutationFn: todo.deleteTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       setShowModal(false);

@@ -51,14 +51,14 @@ export default function Modal({ type, onClose, task, onDelete }: ModalProps) {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-3 py-2 bg-neutral-700 hover:bg-neutral-600 rounded text-sm"
+                                className="px-3 py-2 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-sm"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 type="submit"
-                                className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded text-sm"
+                                className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-sm"
                                 onClick={handleConfirmDelete}
                             >
                                 Delete Task

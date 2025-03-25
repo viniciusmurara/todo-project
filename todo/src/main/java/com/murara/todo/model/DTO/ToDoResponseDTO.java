@@ -1,6 +1,6 @@
-package com.murara.todo.DTO;
+package com.murara.todo.model.DTO;
 
-import com.murara.todo.model.ToDo;
+import com.murara.todo.model.entity.ToDo;
 import lombok.*;
 
 @Getter

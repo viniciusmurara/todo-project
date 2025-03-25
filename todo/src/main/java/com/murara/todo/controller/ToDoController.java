@@ -1,7 +1,7 @@
 package com.murara.todo.controller;
 
-import com.murara.todo.DTO.ToDoRequestDTO;
-import com.murara.todo.DTO.ToDoResponseDTO;
+import com.murara.todo.model.DTO.ToDoRequestDTO;
+import com.murara.todo.model.DTO.ToDoResponseDTO;
 import com.murara.todo.service.ToDoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

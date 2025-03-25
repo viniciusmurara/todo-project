@@ -34,7 +34,7 @@ export default function Register() {
                 </p>
             </div>
             <Link to={"/"}>
-                <button className="px-5 py-2 bg-neutral-600 rounded-md hover:bg-neutral-500">
+                <button className="px-5 py-2 bg-neutral-600 rounded-lg hover:bg-neutral-500">
                     Sign Up
                 </button>
             </Link>

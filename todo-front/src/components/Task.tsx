@@ -3,7 +3,7 @@ import { getPriorityClasses } from "../functions/priority"
 import TaskModel, { TaskStatus } from "../model/Task"
 import { IconCheck } from "../icons" 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { api } from "../api/api"
+import { todo } from "../api/todo"
 
 interface TaskProps {
     task: TaskModel
@@ -18,7 +18,7 @@ export default function Task({ task, onError, onEdit, onDelete, onInfo }: TaskPr
     const queryClient = useQueryClient();
 
     const updateStatusMutation = useMutation({
-        mutationFn: api.updateTaskStatus,
+        mutationFn: todo.updateTaskStatus,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tasks"] });
         }

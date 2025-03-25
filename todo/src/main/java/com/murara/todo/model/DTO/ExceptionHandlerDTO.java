@@ -1,4 +1,4 @@
-package com.murara.todo.DTO;
+package com.murara.todo.model.DTO;
 
 import java.time.LocalDateTime;
 

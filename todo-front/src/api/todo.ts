@@ -1,6 +1,6 @@
 import Task from "../model/Task";
 
-export const api = {
+export const todo = {
     getTasks: async (): Promise<Task[]> => {
       const resp = await fetch("http://localhost:8082/todo");
       return resp.json();

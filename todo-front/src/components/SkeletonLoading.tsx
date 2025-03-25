@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../api/api";
+import { todo } from "../api/todo";
 
 interface SkeletonLoadingProps {
     className?: string
@@ -8,7 +8,7 @@ interface SkeletonLoadingProps {
 export default function SkeletonLoading({ className } : SkeletonLoadingProps) {
     const { data: taskCount } = useQuery<number>({
         queryKey: ["taskCount"],
-        queryFn: api.getTaskLength
+        queryFn: todo.getTaskLength
     })
 
     return (

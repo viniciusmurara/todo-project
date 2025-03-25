@@ -2,10 +2,9 @@ package com.murara.todo.service;
 
 import com.murara.todo.exception.NullToDoException;
 import com.murara.todo.exception.ToDoNotFoundException;
-import com.murara.todo.model.ToDo;
+import com.murara.todo.model.entity.ToDo;
 import com.murara.todo.repository.ToDoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
