@@ -9,6 +9,11 @@ services:
       MYSQL_DATABASE: todo-mysql
       MYSQL_USER: usuario
       MYSQL_PASSWORD: senha
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - todo-net
 
@@ -20,7 +25,8 @@ services:
     networks:
       - todo-net
     depends_on:
-      - todo-mysql
+      todo-mysql:
+        condition: service_healthy
 
 networks:
   todo-net:
