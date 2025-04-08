@@ -1,3 +1,3 @@
-FROM openjdk:23
+FROM openjdk:22
 COPY target/todo-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]
